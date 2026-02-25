@@ -1,589 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Church Without Curtains | Leader Hub</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Church Without Curtains | Digital Health for the Church</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    <!-- Chosen Palette: Warm Neutrals & Serene Earth Tones -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            bg: '#F9F8F6',      // Warm Off-white
-                            card: '#FFFFFF',    // Pure White
-                            text: '#2D3748',    // Dark Gray
-                            subtext: '#718096', // Medium Gray
-                            primary: '#8C7B75', // Warm Taupe/Earth
-                            accent: '#D69E2E',  // Muted Gold
-                            danger: '#E53E3E',  // Crisis Red
-                            warning: '#DD6B20', // Orange Level
-                            safe: '#38A169',    // Green/Yellow Level
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Lora', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
+body {
+font-family: 'Inter', sans-serif;
+scroll-behavior: smooth;
+}
 
-    <style>
-        body {
-            background-color: #F9F8F6;
-            color: #2D3748;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        /* Custom scrollbar for timeline if needed */
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
 
-    <!-- Application Structure Plan:
-        1. Header: Vision & Mission.
-        2. Triage Dashboard (Top Priority): Interactive cards for Levels 1, 2, 3. Allows leaders to quickly identify severity.
-        3. The Diagnostic Core (Chart): Radar chart mapping Habits to Heart Needs. This visualizes the "Why" behind the "What".
-        4. The Fix Protocol: Dynamic text area updating based on the Chart selection.
-        5. The 40-Day Kickstart: Horizontal scroll/timeline for the weekly challenges.
-        6. Mentor Tactics: Accordion/Grid for soft skills (Squeeze, Pause).
-        7. Safety Net: Fixed footer or prominent section for crisis numbers.
-    -->
+.tab-active {
+transform: scale(1.05);
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
-    <!-- Visualization & Content Choices:
-        - Triage: Colored Cards -> Immediate visual recognition of severity (Yellow/Orange/Red).
-        - Support Protocols: Radar Chart -> Goal: Relate abstract habits to emotional needs. Interaction: Clicking a habit updates the chart to show which "Heart Need" is spiking (Security, Identity, etc.) and reveals the "Nuclear Option" text.
-        - Kickstart: Timeline UI -> Shows progression and journey.
-        - Confirmation: NO SVG, NO Mermaid. All icons via Unicode or CSS shapes.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+.fade-in {
+animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+</style>
 </head>
-<body class="font-sans antialiased">
+<body class="bg-slate-50 text-slate-900">
 
-    <!-- Header Section -->
-    <header class="bg-brand-card shadow-sm sticky top-0 z-50 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <span class="text-2xl">???</span>
-                <div>
-                    <h1 class="text-xl font-bold text-gray-800 tracking-tight">Church Without Curtains</h1>
-                    <p class="text-xs text-brand-subtext font-medium uppercase tracking-wider">Leader Master Hub</p>
-                </div>
-            </div>
-            <nav class="hidden md:flex space-x-6">
-                <a href="#triage" class="text-sm font-medium hover:text-brand-primary transition">Triage</a>
-                <a href="#protocols" class="text-sm font-medium hover:text-brand-primary transition">Protocols</a>
-                <a href="#kickstart" class="text-sm font-medium hover:text-brand-primary transition">Kickstart</a>
-                <a href="#mentors" class="text-sm font-medium hover:text-brand-primary transition">Mentor Tools</a>
-            </nav>
-            <button onclick="scrollToSafety()" class="bg-brand-danger text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition shadow-sm">
-                Safety Net
-            </button>
-        </div>
-    </header>
+<!-- Header -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center shadow-inner">
+<span class="text-white font-bold text-xl">GCC</span>
+</div>
+<div>
+<h1 class="text-xl font-bold leading-none text-slate-800">A Church Without Curtains</h1>
+<span class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Grace Community Church</span>
+</div>
+</div>
 
-    <!-- Hero / Vision -->
-    <section class="max-w-4xl mx-auto px-4 py-12 text-center">
-        <h2 class="font-serif text-3xl md:text-4xl text-gray-900 mb-4 leading-tight">
-            From Digital Secrecy to <span class="text-brand-primary italic">Authentic Presence</span>
-        </h2>
-        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            This hub is your field manual. Use the tools below to assess struggles, identify heart needs, and guide your group members back to connection with God and others.
-        </p>
-        <div class="h-1 w-24 bg-brand-primary mx-auto rounded-full opacity-30"></div>
-    </section>
+<div class="hidden md:flex items-center space-x-4">
+<span class="text-sm font-medium text-slate-500">Need to talk?</span>
+<button class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+Contact Pastoral Care
+</button>
+</div>
+</div>
+</header>
 
-    <!-- SECTION 1: THE TRIAGE TOOL -->
-    <section id="triage" class="max-w-7xl mx-auto px-4 py-8">
-        <div class="mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">?? The Quick Triage Tool</h3>
-            <p class="text-gray-600 mt-2">
-                Not every struggle is a crisis. Use this dashboard to assess the situation immediately. Click a level to see the required action.
-            </p>
-        </div>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Level 1 -->
-            <button onclick="selectTriage('level1')" class="triage-btn group text-left bg-white p-6 rounded-xl border-l-4 border-yellow-400 shadow-sm hover:shadow-md transition card-hover focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded uppercase">Level 1</span>
-                    <span class="text-2xl grayscale group-hover:grayscale-0 transition">??</span>
-                </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">The Struggle</h4>
-                <p class="text-sm text-gray-600">Habit takes time/money, but life is functioning.</p>
-            </button>
+<!-- Hero Section -->
+<div class="max-w-3xl mb-8">
+<h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Transformed by Renewing Our Minds</h2>
+<p class="text-lg text-slate-600 leading-relaxed">
+Technology should help us, but many apps are made to keep us hooked. Use this guide to understand how your phone affects you and find simple ways to build better habits by the renewal of our minds. We must recognize that people are not just using tools...they are being used by them! These platforms are engineered to bypass the conscious mind and hack the human brain for profit. To move from a culture of digital secrecy to one of authentic presence, we require a structured, church-led intervention. This is the heart of the "Church Without Curtains" movement: pulling back the veil of digital dependency to reveal the person God intended us to be
+</p>
+</div>
 
-            <!-- Level 2 -->
-            <button onclick="selectTriage('level2')" class="triage-btn group text-left bg-white p-6 rounded-xl border-l-4 border-brand-warning shadow-sm hover:shadow-md transition card-hover focus:outline-none focus:ring-2 focus:ring-brand-warning">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded uppercase">Level 2</span>
-                    <span class="text-2xl grayscale group-hover:grayscale-0 transition">??</span>
-                </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">The Hiding</h4>
-                <p class="text-sm text-gray-600">Active secrecy, lying, or hidden spending.</p>
-            </button>
+<!-- Navigation Tabs -->
+<nav id="mainNav" class="flex flex-row gap-2 mb-8 mt-4 overflow-x-auto pb-4 scrollbar-hide w-full">
+<!-- Navigation buttons will be injected here by JS -->
+</nav>
 
-            <!-- Level 3 -->
-            <button onclick="selectTriage('level3')" class="triage-btn group text-left bg-white p-6 rounded-xl border-l-4 border-brand-danger shadow-sm hover:shadow-md transition card-hover focus:outline-none focus:ring-2 focus:ring-brand-danger">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase">Level 3</span>
-                    <span class="text-2xl grayscale group-hover:grayscale-0 transition">??</span>
-                </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">The Crisis</h4>
-                <p class="text-sm text-gray-600">Financial ruin, illegal activity, or self-harm.</p>
-            </button>
-        </div>
+<!-- Dynamic Content Area -->
+<div id="contentArea" class="fade-in">
+<!-- Content will be injected here by JS -->
+</div>
 
-        <!-- Triage Result Display -->
-        <div id="triage-result" class="mt-6 bg-white rounded-xl shadow-lg border border-gray-100 hidden overflow-hidden">
-            <div class="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start">
-                <div class="flex-shrink-0 bg-gray-50 rounded-full p-4" id="triage-icon-container">
-                    <span id="triage-icon" class="text-4xl"></span>
-                </div>
-                <div class="flex-1">
-                    <h5 id="triage-title" class="text-xl font-bold text-gray-900 mb-2"></h5>
-                    <div class="prose prose-sm text-gray-600 mb-4">
-                        <p id="triage-desc"></p>
-                    </div>
-                    <div class="bg-gray-50 border-l-4 border-brand-primary p-4 rounded-r-lg">
-                        <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Immediate Action Required</span>
-                        <p id="triage-action" class="font-medium text-gray-900"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+</main>
 
-    <!-- SECTION 2: PROTOCOLS & HEART NEEDS -->
-    <section id="protocols" class="max-w-7xl mx-auto px-4 py-12 bg-white rounded-3xl shadow-sm my-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <!-- Left: Text & Selector -->
-            <div class="lg:col-span-5 flex flex-col justify-center">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">??? The Support Protocols</h3>
-                <p class="text-gray-600 mb-6 text-sm">
-                    Bad habits are often just misguided attempts to meet legitimate needs. Select a "Curtain" (habit) below to see the underlying "Heart Need" and the "Nuclear Option" fix.
-                </p>
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-400 py-12 text-center border-t border-slate-800 mt-12">
+<div class="max-w-4xl mx-auto px-6">
+<h4 class="text-white font-bold text-lg mb-4">Grace Community Church</h4>
+<p class="text-sm mb-6 leading-relaxed">
+This guide is here to help you learn about digital health. If you are struggling, please reach out to our team or a professional counselor.
+</p>
+<div class="flex justify-center space-x-4 text-xs font-semibold tracking-wider uppercase">
+<span class="hover:text-white cursor-pointer transition-colors">Privacy</span>
+<span>&bull;</span>
+<span class="hover:text-white cursor-pointer transition-colors">Resources</span>
+<span>&bull;</span>
+<span class="hover:text-white cursor-pointer transition-colors">Contact</span>
+</div>
+</div>
+</footer>
 
-                <div class="space-y-2">
-                    <button onclick="updateProtocol('betting')" class="protocol-btn w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-brand-primary transition flex items-center justify-between group active-protocol" id="btn-betting">
-                        <span class="font-medium text-gray-700 group-hover:text-gray-900">Online Betting</span>
-                        <span class="text-gray-400">??</span>
-                    </button>
-                    <button onclick="updateProtocol('news')" class="protocol-btn w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-brand-primary transition flex items-center justify-between group" id="btn-news">
-                        <span class="font-medium text-gray-700 group-hover:text-gray-900">Doomscrolling (News)</span>
-                        <span class="text-gray-400">??</span>
-                    </button>
-                    <button onclick="updateProtocol('social')" class="protocol-btn w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-brand-primary transition flex items-center justify-between group" id="btn-social">
-                        <span class="font-medium text-gray-700 group-hover:text-gray-900">Social Validation</span>
-                        <span class="text-gray-400">??</span>
-                    </button>
-                    <button onclick="updateProtocol('gaming')" class="protocol-btn w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-brand-primary transition flex items-center justify-between group" id="btn-gaming">
-                        <span class="font-medium text-gray-700 group-hover:text-gray-900">Gaming / Pornography</span>
-                        <span class="text-gray-400">??</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right: Visualization & Details -->
-            <div class="lg:col-span-7 bg-gray-50 rounded-2xl p-6 relative">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-                    <!-- Chart -->
-                    <div class="flex flex-col items-center justify-center">
-                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Heart Need Analysis</h4>
-                        <div class="chart-container">
-                            <canvas id="heartNeedsChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Content -->
-                    <div class="flex flex-col justify-center border-t md:border-t-0 md:border-l border-gray-200 pt-6 md:pt-0 md:pl-6">
-                        <div id="protocol-content" class="space-y-4">
-                            <div>
-                                <span class="text-xs font-bold text-brand-primary uppercase tracking-wide">Primary Heart Need</span>
-                                <h2 id="need-title" class="text-3xl font-serif text-gray-900 mt-1">Security</h2>
-                                <p class="text-sm text-gray-500 italic mt-1">"I need to know I'm okay."</p>
-                            </div>
-                            
-                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                                <span class="text-xs font-bold text-red-500 uppercase tracking-wide">The Nuclear Option</span>
-                                <p id="protocol-fix" class="text-gray-800 font-medium mt-2 leading-relaxed">
-                                    Bank-level gambling blocks and shared bank statements.
-                                </p>
-                            </div>
-
-                            <p class="text-xs text-gray-400 mt-2">
-                                *Mentors: Remind them that God is their provider, not the 'big win'.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 3: 40-DAY KICKSTART -->
-    <section id="kickstart" class="max-w-7xl mx-auto px-4 py-12">
-        <div class="text-center mb-10">
-            <h3 class="text-2xl font-bold text-gray-800">??? The 40-Day Kickstart</h3>
-            <p class="text-gray-600 max-w-2xl mx-auto mt-2">
-                A simple, progressive path for the first few weeks of the group. Don't rush these steps.
-            </p>
-        </div>
-
-        <!-- Interactive Timeline -->
-        <div class="relative">
-            <!-- Line -->
-            <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 hidden md:block z-0"></div>
-
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-4 relative z-10">
-                <!-- Week 1 -->
-                <div onclick="selectWeek(1)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border-2 border-brand-primary shadow-lg relative h-full flex flex-col justify-between hover:scale-105 transition duration-300">
-                        <div class="absolute -top-3 -right-3 bg-brand-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-sm">1</div>
-                        <h4 class="font-bold text-gray-900 mb-2">Observation</h4>
-                        <p class="text-xs text-gray-600">Check "Screen Time" nightly. Just look at the numbers.</p>
-                        <div class="mt-3 w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-primary w-1/6"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Week 2 -->
-                <div onclick="selectWeek(2)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative h-full flex flex-col justify-between hover:border-brand-primary hover:shadow-md transition">
-                        <div class="absolute -top-3 -right-3 bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">2</div>
-                        <h4 class="font-bold text-gray-900 mb-2">The Purge</h4>
-                        <p class="text-xs text-gray-600">Delete one app that makes you feel anxious/grumpy.</p>
-                    </div>
-                </div>
-
-                <!-- Week 3 -->
-                <div onclick="selectWeek(3)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative h-full flex flex-col justify-between hover:border-brand-primary hover:shadow-md transition">
-                        <div class="absolute -top-3 -right-3 bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">3</div>
-                        <h4 class="font-bold text-gray-900 mb-2">Danger Time</h4>
-                        <p class="text-xs text-gray-600">Phone in a different room during your weakest hour.</p>
-                    </div>
-                </div>
-
-                <!-- Week 4 -->
-                <div onclick="selectWeek(4)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative h-full flex flex-col justify-between hover:border-brand-primary hover:shadow-md transition">
-                        <div class="absolute -top-3 -right-3 bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">4</div>
-                        <h4 class="font-bold text-gray-900 mb-2">Phone-Free</h4>
-                        <p class="text-xs text-gray-600">One meal a day with zero devices until dishes are done.</p>
-                    </div>
-                </div>
-
-                <!-- Week 5 -->
-                <div onclick="selectWeek(5)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative h-full flex flex-col justify-between hover:border-brand-primary hover:shadow-md transition">
-                        <div class="absolute -top-3 -right-3 bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">5</div>
-                        <h4 class="font-bold text-gray-900 mb-2">Replacement</h4>
-                        <p class="text-xs text-gray-600">Replace 20m of scrolling with 20m of a real hobby/prayer.</p>
-                    </div>
-                </div>
-
-                <!-- Week 6 -->
-                <div onclick="selectWeek(6)" class="cursor-pointer group">
-                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative h-full flex flex-col justify-between hover:border-brand-primary hover:shadow-md transition">
-                        <div class="absolute -top-3 -right-3 bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">6</div>
-                        <h4 class="font-bold text-gray-900 mb-2">Image Audit</h4>
-                        <p class="text-xs text-gray-600">Ask: "If I never posted again, would I still know who I am?"</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="week-detail" class="mt-6 bg-brand-primary bg-opacity-10 p-4 rounded-lg text-center hidden">
-                <p class="text-brand-primary font-bold" id="week-detail-text"></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 4: MENTOR CHEAT SHEET -->
-    <section id="mentors" class="max-w-5xl mx-auto px-4 py-12">
-        <div class="bg-brand-text rounded-2xl p-8 text-white shadow-xl">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-                <div>
-                    <h3 class="text-2xl font-bold">?? Mentor Cheat Sheet</h3>
-                    <p class="text-gray-400 text-sm mt-1">Quick tips for navigating difficult conversations.</p>
-                </div>
-                <div class="mt-4 md:mt-0 bg-white bg-opacity-10 px-4 py-2 rounded-full">
-                    <span class="text-sm font-semibold">For Leaders Only</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-white bg-opacity-5 p-6 rounded-xl hover:bg-opacity-10 transition border border-white border-opacity-10">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl">???</span>
-                        <h4 class="font-bold text-lg">The "Me Too" Opening</h4>
-                    </div>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        Kill the shame immediately. Prove they aren't the only one. Start the meeting by admitting your own (small) struggle first.
-                    </p>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-white bg-opacity-5 p-6 rounded-xl hover:bg-opacity-10 transition border border-white border-opacity-10">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl">??</span>
-                        <h4 class="font-bold text-lg">Focus on the "Squeeze"</h4>
-                    </div>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        The phone is just a bandage. Ask: "What was happening in your day right before you reached for the phone?" (Stress? Loneliness?)
-                    </p>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-white bg-opacity-5 p-6 rounded-xl hover:bg-opacity-10 transition border border-white border-opacity-10">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl">??</span>
-                        <h4 class="font-bold text-lg">The Gift of the Pause</h4>
-                    </div>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        If they get emotional, count to ten in your head before you speak. Let the silence be a safe place for them to be "unfinished."
-                    </p>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-white bg-opacity-5 p-6 rounded-xl hover:bg-opacity-10 transition border border-white border-opacity-10">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl">??</span>
-                        <h4 class="font-bold text-lg">Escalation is Love</h4>
-                    </div>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        If someone is in a "Red Level" crisis, don't carry it alone. "I love you too much to let you carry this by yourself. Let's call the Pastor together."
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 5: SAFETY NET -->
-    <footer id="safety-net" class="bg-gray-900 text-white py-12 mt-12">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h3 class="text-2xl font-bold mb-6 text-brand-danger">?? The Safety Net</h3>
-            <p class="text-gray-400 mb-8">Keep these numbers ready. There is no shame in asking for emergency help.</p>
-            
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <a href="tel:988" class="flex items-center justify-center gap-3 bg-white text-gray-900 px-6 py-4 rounded-lg font-bold hover:bg-gray-200 transition">
-                    <span>??</span>
-                    Suicide & Crisis Lifeline: 988
-                </a>
-                <a href="tel:18005224700" class="flex items-center justify-center gap-3 bg-gray-800 text-white border border-gray-700 px-6 py-4 rounded-lg font-bold hover:bg-gray-700 transition">
-                    <span>??</span>
-                    National Problem Gambling
-                </a>
-            </div>
-            <p class="text-xs text-gray-600 mt-12">Church Without Curtains © 2024</p>
-        </div>
-    </footer>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // --- DATA STORE ---
-        const triageData = {
-            level1: {
-                title: "Level 1: The Struggle",
-                desc: "The habit takes too much time or money, but life is still functionally intact. The individual is annoyed by their habit but not destroyed by it.",
-                action: "Action: Join the support group and set up digital blocks today.",
-                color: "text-yellow-600",
-                borderColor: "border-yellow-400",
-                icon: "??"
-            },
-            level2: {
-                title: "Level 2: The Hiding",
-                desc: "Active secrecy is present. They are lying to a partner, hiding screens when others walk in, or using credit cards/secret accounts to fund the habit.",
-                action: "Action: Mandatory honesty session with partner and full financial oversight.",
-                color: "text-orange-600",
-                borderColor: "border-orange-500",
-                icon: "??"
-            },
-            level3: {
-                title: "Level 3: The Crisis",
-                desc: "Financial ruin, illegal activity, severe neglect of family, or thoughts of self-harm. The curtain has become a wall cutting them off from reality.",
-                action: "Action: Immediate referral to professional counseling and church leadership. Do not handle alone.",
-                color: "text-red-600",
-                borderColor: "border-red-600",
-                icon: "??"
-            }
-        };
-
-        const protocolData = {
-            betting: {
-                title: "Security",
-                quote: "I need to know I'm okay financially/future-wise.",
-                fix: "Bank-level gambling blocks (like Gamban) and shared bank statements with a spouse or mentor.",
-                chartData: [90, 30, 40, 50, 20] // Security, Peace, Identity, Comfort, Connection
-            },
-            news: {
-                title: "Peace",
-                quote: "I need to control the chaos by knowing everything.",
-                fix: "Turn phone to 'Grayscale' (black and white) and delete all news apps. Check news only on a desktop.",
-                chartData: [40, 95, 20, 30, 20]
-            },
-            social: {
-                title: "Identity",
-                quote: "I need to know I matter and am seen.",
-                fix: "Hide 'Like' counts on Instagram. Do a 'No-Selfie' month.",
-                chartData: [30, 20, 90, 40, 80]
-            },
-            gaming: {
-                title: "Comfort / Achievement",
-                quote: "I need to feel successful or numb the pain.",
-                fix: "Consoles in public rooms only. No devices in the bedroom after 9 PM.",
-                chartData: [50, 60, 40, 90, 10]
-            }
-        };
-
-        const weekDetails = {
-            1: "Week 1 Detail: Don't change anything yet. Just observe. The goal is awareness, not immediate perfection.",
-            2: "Week 2 Detail: Pick the one app that leaves you feeling drained. Delete it. Notice the withdrawal.",
-            3: "Week 3 Detail: 10:00 PM is often a danger zone. Buy an alarm clock and charge phone in the kitchen.",
-            4: "Week 4 Detail: Re-learn the art of eye contact and tasting your food. No phones at the table.",
-            5: "Week 5 Detail: You can't just remove a bad habit; you must replace it. Read, walk, or pray.",
-            6: "Week 6 Detail: Identity Check. Are you curating a life or living one?"
-        };
-
-        // --- CHART JS SETUP ---
-        let heartChart;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('heartNeedsChart').getContext('2d');
-            
-            heartChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Security', 'Peace', 'Identity', 'Comfort', 'Connection'],
-                    datasets: [{
-                        label: 'Heart Need Intensity',
-                        data: [50, 50, 50, 50, 50], // Initial neutral state
-                        backgroundColor: 'rgba(214, 158, 46, 0.2)', // brand-accent
-                        borderColor: 'rgba(214, 158, 46, 1)',
-                        pointBackgroundColor: 'rgba(140, 123, 117, 1)', // brand-primary
-                        borderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0,0,0,0.1)' },
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            pointLabels: {
-                                font: { size: 12, family: 'Inter' },
-                                color: '#4A5568'
-                            },
-                            ticks: { display: false, max: 100 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Intensity: ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Load initial state
-            updateProtocol('betting');
-        });
-
-        // --- INTERACTION FUNCTIONS ---
-
-        function selectTriage(level) {
-            const data = triageData[level];
-            const resultDiv = document.getElementById('triage-result');
-            const iconContainer = document.getElementById('triage-icon-container');
-            
-            // Update Text
-            document.getElementById('triage-title').innerText = data.title;
-            document.getElementById('triage-desc').innerText = data.desc;
-            document.getElementById('triage-action').innerText = data.action;
-            document.getElementById('triage-icon').innerText = data.icon;
-            
-            // Update Colors
-            document.getElementById('triage-title').className = `text-xl font-bold mb-2 ${data.color}`;
-            iconContainer.className = `flex-shrink-0 bg-gray-50 rounded-full p-4 border-2 ${data.borderColor}`;
-
-            // Show
-            resultDiv.classList.remove('hidden');
-            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function updateProtocol(type) {
-            const data = protocolData[type];
-
-            // Update UI Text
-            document.getElementById('need-title').innerText = data.title;
-            document.getElementById('protocol-fix').innerText = data.fix;
-            
-            // Highlight Button
-            document.querySelectorAll('.protocol-btn').forEach(btn => {
-                btn.classList.remove('border-brand-primary', 'bg-gray-50');
-                btn.classList.add('border-gray-200');
-            });
-            const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.classList.remove('border-gray-200');
-            activeBtn.classList.add('border-brand-primary', 'bg-gray-50');
-
-            // Update Chart
-            heartChart.data.datasets[0].data = data.chartData;
-            heartChart.update();
-        }
-
-        function selectWeek(weekNum) {
-            const detailDiv = document.getElementById('week-detail');
-            const detailText = document.getElementById('week-detail-text');
-            
-            detailText.innerText = weekDetails[weekNum];
-            detailDiv.classList.remove('hidden');
-            
-            // Add a visual indicator to the selected week card (optional logic)
-        }
-
-        function scrollToSafety() {
-            document.getElementById('safety-net').scrollIntoView({ behavior: 'smooth' });
-        }
-
-    </script>
-</body>
-</html>
+<script>
+const hubData = {
+gambling: {
+id: 'gambling',
+title: 'Mobile Gambling',
+color: 'bg-orange-500',
+textColor: 'text-orange-700',
+lightColor: 'bg-orange-50',
+summary: 'The "Pocket Casino" has removed all travel time and closing hours from betting, creating a highly addictive trance-like state. For a long time, I treated sports betting like it was just a way to make the game more interesting, but it turned into something much darker. I found myself chasing that one big parlay to fix our finances or to give me a win when work felt like a grind. The science tells us our brains actually get a bigger hit of dopamine from the "maybe" than the actual win. We get hooked on the "near-miss," thinking we’re just one lucky break away from everything being okay. But the truth is, I was trading my family’s security for a digital rush.',
+levels: { dopa: 95, cort: 30, oxy: 10 },
+mechanics: [
+{ title: 'Zero Barriers', desc: 'No travel time or closing hours. Bet from anywhere, anytime.' },
+{ title: 'The Trance', desc: 'High-def colors and vibrations create a "flow state" that ignores the value of money.' },
+{ title: 'Gamification', desc: 'Streaks and rewards make real betting feel like a harmless game.' }
+],
+tools: [
+'Turn off all gambling app notifications.',
+'Install blocks like BetBlocker or Gamban.',
+'Use your banking app to toggle gambling transactions to OFF.'
+]
+},
+pornography: {
+id: 'pornography',
+title: 'Digital Pornography',
+color: 'bg-red-600',
+textColor: 'text-red-700',
+lightColor: 'bg-red-50',
+                summary: 'Driven by Anonymity, Accessibility, and Affordability, mobile devices provide a high-speed engine for compulsive content consumption.',
+                summary: 'Driven by Anonymity, Accessibility, and Affordability, mobile devices provide a high-speed engine for compulsive content consumption. If you feel like you’re losing your taste for real life, We want you to know you aren’t alone. You aren't a project to be fixed; you have been caught in a chemical loop. But we don't have to stay in the dark. In a Church Without Curtains, we are building a bridge from shame back to grace. We recognize that the screen is often just a symptom of a deeper squeeze.....maybe you're feeling powerless, lonely, or just plain tired. But you don't have to fight this alone.',
+levels: { dopa: 98, cort: 45, oxy: 5 },
+mechanics: [
+{ title: 'Infinite Novelty', desc: 'The brain is hardwired for newness; endless scrolling ensures you never hit a natural stop.' },
